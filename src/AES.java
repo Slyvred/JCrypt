@@ -97,15 +97,15 @@ public class AES {
         inputFileStream.read(inputBytes);
         inputFileStream.close();
 
-        FileOutputStream outputFileStream = new FileOutputStream(file);
-
-        byte[] outputBytes = null;
+        byte[] outputBytes = inputBytes;
         try {
-            outputBytes = cipher.doFinal(inputBytes);
+           outputBytes = cipher.doFinal(inputBytes);
         } catch (Exception e) {
             System.err.println("Error running AES, check key");
             System.exit(1);
         }
+
+        FileOutputStream outputFileStream = new FileOutputStream(file);
         outputFileStream.write(outputBytes);
         outputFileStream.close();
     }
