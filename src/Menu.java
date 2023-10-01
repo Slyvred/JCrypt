@@ -86,15 +86,12 @@ public class Menu {
 
         String path = getString("Enter file path");
         String key = getString("Enter key");
-        SecretKey secretKey;
         try {
-            secretKey = AES.generateAESKeyFromPassword(key);
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException ex) {
-            throw new RuntimeException(ex);
-        }
-
-        try {
-            AES.toFile(path, secretKey, mode);
+            if (mode == Cipher.ENCRYPT_MODE) {
+                AES.encryptFile(path, key);
+            } else {
+                AES.decryptFile(path, key);
+            }
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
