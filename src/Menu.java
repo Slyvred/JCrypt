@@ -23,7 +23,7 @@ public class Menu {
     }
 
     public static encryptionMethod displayMenu() {
-        System.out.println("-==== JCrypter - By Slyvred ====-");
+        System.out.println("-==== JCrypt - By Slyvred ====-");
         System.out.println("1. Xor text\n2. Xor file\n3. Encrypt file (AES-256)\n4. Decrypt file (AES-256)\n5. Exit");
         System.out.print("Select an option: ");
         Scanner sc = new Scanner(System.in);
