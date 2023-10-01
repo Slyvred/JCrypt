@@ -18,7 +18,7 @@ class Xor {
         return output.toString();
     }
 
-    public static byte[] xorBytes(byte[] bytes, String key) {
+    private static byte[] xorBytes(byte[] bytes, String key) {
 
         byte[] output = new byte[bytes.length];
 
@@ -30,10 +30,10 @@ class Xor {
     }
 
     // Display file information
-    private static void displayFileInfo(File file) {
-        System.out.println("File name: " + file.getName());
+    public static void displayFileInfo(File file) {
+        System.out.println("\nFile name: " + file.getName());
         System.out.println("Absolute path: " + file.getAbsolutePath());
-        System.out.println("Size: " + file.length() + " bytes");
+        System.out.println("Size: " + file.length() + " bytes\n");
     }
 
     private static String toHex(String arg) {
@@ -42,8 +42,15 @@ class Xor {
 
     public static void toFile(String file, String key) throws Exception {
 
-        FileInputStream inputFileStream = new FileInputStream(file);
+        // Check if file exists
         File _file = new File(file);
+        if (!_file.exists() || !_file.isFile()) {
+            System.err.println("File does not exist");
+            System.exit(1);
+        }
+        displayFileInfo(_file);
+
+        FileInputStream inputFileStream = new FileInputStream(file);
         byte[] inputBytes = new byte[(int) _file.length()];
 
         // Check if file isn't too large

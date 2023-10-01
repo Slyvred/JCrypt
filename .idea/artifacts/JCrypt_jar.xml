@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="JCrypt:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/JCrypt_jar</output-path>
+    <root id="archive" name="JCrypt.jar">
+      <element id="module-output" name="JCrypt" />
+    </root>
+  </artifact>
+</component>

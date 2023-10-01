@@ -35,13 +35,15 @@ public class AES {
         return new SecretKeySpec(keyBytes, "AES");
     }
 
+    // The salt should be generated once and stored somewhere
+    // The same salt should be used for decryption
+    // Currently the salt isn't stored anywhere or randomized so this is fucking stupid
     private static byte[] generateSalt() {
         // Generate 16 bytes salt (128 bits)
         byte[] salt = new byte[16];
-        // Remplissez le sel avec des octets aléatoires (vous pouvez utiliser SecureRandom pour plus de sécurité)
         for (int i = 0; i < salt.length; i++) {
-//            salt[i] = (byte) i;
-            salt[i] = SecureRandom.getSeed(1)[0];
+            salt[i] = (byte) i;
+//            salt[i] = SecureRandom.getSeed(1)[0];
         }
         return salt;
     }
@@ -50,10 +52,16 @@ public class AES {
         Cipher cipher = Cipher.getInstance("AES");
         cipher.init(mode, secretKey);
 
+        // Check if file exists
+        File _file = new File(inputFile);
+        if (!_file.exists() || !_file.isFile()) {
+            System.err.println("File does not exist");
+            System.exit(1);
+        }
+        Xor.displayFileInfo(_file);
+
         FileInputStream inputFileStream = new FileInputStream(inputFile);
         FileOutputStream outputFileStream = new FileOutputStream(outputFile);
-
-        File _file = new File(inputFile);
 
         byte[] inputBytes = new byte[(int) _file.length()];
 
@@ -72,8 +80,15 @@ public class AES {
         Cipher cipher = Cipher.getInstance("AES");
         cipher.init(mode, secretKey);
 
-        FileInputStream inputFileStream = new FileInputStream(file);
+        // Check if file exists
         File _file = new File(file);
+        if (!_file.exists() || !_file.isFile()) {
+            System.err.println("File does not exist");
+            System.exit(1);
+        }
+        Xor.displayFileInfo(_file);
+
+        FileInputStream inputFileStream = new FileInputStream(file);
         byte[] inputBytes = new byte[(int)_file.length()];
 
         if (_file.length() != inputBytes.length) {
@@ -83,7 +98,14 @@ public class AES {
         inputFileStream.close();
 
         FileOutputStream outputFileStream = new FileOutputStream(file);
-        byte[] outputBytes = cipher.doFinal(inputBytes);
+
+        byte[] outputBytes = null;
+        try {
+            outputBytes = cipher.doFinal(inputBytes);
+        } catch (Exception e) {
+            System.err.println("Error running AES, check key");
+            System.exit(1);
+        }
         outputFileStream.write(outputBytes);
         outputFileStream.close();
     }

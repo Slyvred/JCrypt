@@ -32,12 +32,12 @@ public class Menu {
         try {
             option = sc.nextInt();
         } catch (Exception e) {
-            System.out.println("Error reading input");
+            System.err.println("Error reading input");
             System.exit(1);
         }
 
         if (option < 1 || option > encryptionMethod.values().length) {
-            System.out.println("Invalid option");
+            System.err.println("Invalid option");
             System.exit(1);
         }
 
@@ -52,7 +52,7 @@ public class Menu {
         try {
             input = sc.nextLine();
         } catch (Exception e) {
-            System.out.println("Error reading input");
+            System.err.println("Error reading input");
             System.exit(1);
         }
 
