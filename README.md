@@ -1,5 +1,6 @@
 # JCrypt
-This is a simple CLI text/file encrypter made in Java that supports XOR and AES-256 (with salt).
+This is a simple CLI text/file encrypter made in Java that supports XOR and AES-256 (with salt).  
+It was written in Java using the jdk-21 so any machine with jdk-21 (or later) installed should be able to run it fine.
 
 ## Usage
 
