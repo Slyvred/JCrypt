@@ -19,3 +19,9 @@ Select an option:
 
 I made this project as a way to overcome boredom and to get familiar with Java. **I am in no way, shape, or form a cryptography expert**, 
 so don't use this tool to protect sensitive information as **it may be vulnerable and you may also lose your files!**
+
+## Todo
+- [x] Add salt support
+- [x] Store salt and make it random
+- [x] Store salt in the encrypted file
+- [ ] Make salt position "random" in the file
