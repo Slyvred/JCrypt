@@ -10,6 +10,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
+import java.util.Arrays;
 
 public class AES {
     @Deprecated
@@ -98,14 +99,12 @@ public class AES {
             System.exit(1);
         }
 
-        FileOutputStream outputFileStream = new FileOutputStream(file);
-//        byte[] finalBytes = concatBytes(salt, outputBytes);
-        outputFileStream.write(outputBytes);
-        outputFileStream.close();
 
-        FileOutputStream saltFileStream = new FileOutputStream(file + ".salt");
-        saltFileStream.write(salt);
-        saltFileStream.close();
+        // Write salt and cipher to file
+        FileOutputStream outputFileStream = new FileOutputStream(file);
+        byte[] finalBytes = concatBytes(salt, outputBytes);
+        outputFileStream.write(finalBytes);
+        outputFileStream.close();
     }
 
     public static void decryptFile(String file, String key) throws Exception {
@@ -120,14 +119,23 @@ public class AES {
 
         Cipher cipher = Cipher.getInstance("AES");
 
-        // Get salt from file (first 16 bytes)
-//        FileInputStream inputFileStream = new FileInputStream(file);
-        byte[] salt = new byte[16];
-//        inputFileStream.read(salt);
 
-        FileInputStream saltFileStream = new FileInputStream(file + ".salt");
-        saltFileStream.read(salt);
-        saltFileStream.close();
+        // Read file
+        FileInputStream inputFileStream = new FileInputStream(file);
+        byte[] saltAndCipher = new byte[(int)_file.length()];
+
+        if (_file.length() != saltAndCipher.length) {
+            throw new Exception("File too large, aborting");
+        }
+
+        inputFileStream.read(saltAndCipher);
+        inputFileStream.close();
+
+        // Get salt
+        byte[] salt = Arrays.copyOfRange(saltAndCipher, 0, 16); // 16 exclusive
+
+        // Get cipher
+        byte[] inputBytes = Arrays.copyOfRange(saltAndCipher, 16, saltAndCipher.length);
 
         SecretKey secretKey;
         try {
@@ -137,17 +145,6 @@ public class AES {
         }
 
         cipher.init(Cipher.DECRYPT_MODE, secretKey);
-
-        byte[] inputBytes = new byte[(int)_file.length()];
-
-        if (_file.length() != inputBytes.length) {
-            throw new Exception("File too large, aborting");
-        }
-
-        // Read file contents (after salt)
-        FileInputStream inputFileStream = new FileInputStream(file);
-        inputFileStream.read(inputBytes);
-        inputFileStream.close();
 
         byte[] outputBytes = inputBytes;
         try {
@@ -160,9 +157,5 @@ public class AES {
         FileOutputStream outputFileStream = new FileOutputStream(file);
         outputFileStream.write(outputBytes);
         outputFileStream.close();
-
-        // Delete salt file
-        File saltFile = new File(file + ".salt");
-        saltFile.delete();
     }
 }
