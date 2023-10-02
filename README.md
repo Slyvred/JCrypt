@@ -6,12 +6,17 @@ This is a simple CLI text/file encrypter made in Java that supports XOR and AES-
 ```console
 foo@bar:~$ java -jar JCrypt.jar
 
--==== JCrypt - By Slyvred ====-
+<====== JCrypt - By Slyvred ======>
+XOR and AES-256 encryption tool
+
 1. Xor text
 2. Xor file
 3. Encrypt file (AES-256)
 4. Decrypt file (AES-256)
-5. Exit
+5. Encrypt folder (AES-256)
+6. Decrypt folder (AES-256)
+7. Exit
+
 Select an option: 
 ```
 
