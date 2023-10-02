@@ -13,6 +13,13 @@ import java.security.spec.KeySpec;
 import java.util.Arrays;
 
 public class AES {
+
+    /**
+     * Generates a random AES (Advanced Encryption Standard) secret key.
+     *
+     * @return A randomly generated AES SecretKey.
+     * @throws NoSuchAlgorithmException If the specified cryptographic algorithm is not available.
+     */
     @Deprecated
     private static SecretKey generateAESKey() throws NoSuchAlgorithmException {
         KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
@@ -20,6 +27,16 @@ public class AES {
         return keyGenerator.generateKey();
     }
 
+    /**
+     * Generates an AES (Advanced Encryption Standard) secret key from a password and a salt
+     * using a key derivation function (KDF).
+     *
+     * @param password The password from which the key will be derived.
+     * @param salt A byte array representing the salt used in the key derivation.
+     * @return A SecretKey generated from the password and salt.
+     * @throws NoSuchAlgorithmException If the specified cryptographic algorithm is not available.
+     * @throws InvalidKeySpecException If the provided key specification is invalid.
+     */
     public static SecretKey generateAESKeyFromPassword(String password, byte[] salt) throws NoSuchAlgorithmException, InvalidKeySpecException {
         // PBKDF2 settings
         String algorithm = "PBKDF2WithHmacSHA256";
@@ -36,8 +53,13 @@ public class AES {
         return new SecretKeySpec(keyBytes, "AES");
     }
 
-    // The salt should be generated once and stored somewhere
-    // The same salt should be used for decryption
+    /**
+     * Generates a random salt of 128 bits (16 bytes) using a cryptographically secure random number generator.
+     * The salt should be generated once and stored somewhere.
+     * The same salt should be used for decryption.
+     *
+     * @return A byte array containing the generated salt.
+     */
     private static byte[] generateSalt() {
         SecureRandom secureRandom = new SecureRandom();
         byte[] salt = new byte[16]; // 128 bits salt (16 Bytes)
@@ -45,19 +67,34 @@ public class AES {
         return salt;
     }
 
+    /**
+     * Concatenates two byte arrays, `array1` followed by `array2`, and returns the result as a new byte array.
+     *
+     * @param array1 The first byte array to be concatenated.
+     * @param array2 The second byte array to be concatenated.
+     * @return A new byte array containing the concatenated data.
+     */
     private static byte[] concatBytes(byte[] array1, byte[] array2) {
         int length1 = array1.length;
         int length2 = array2.length;
-
         byte[] result = new byte[length1 + length2];
 
         System.arraycopy(array1, 0, result, 0, length1);
-
         System.arraycopy(array2, 0, result, length1, length2);
 
         return result;
     }
 
+
+    /**
+     * Encrypts a file using AES encryption with a provided key and saves the encrypted
+     * data back to the same file. This method generates a random salt for key derivation
+     * and uses it along with the provided key to initialize the encryption process.
+     *
+     * @param file The path to the file to be encrypted.
+     * @param key The encryption key used for AES encryption.
+     * @throws Exception If any error occurs during the encryption process or if the file is too large.
+     */
     public static void encryptFile(String file, String key) throws Exception {
 
         // Check if file exists
@@ -105,10 +142,30 @@ public class AES {
         byte[] finalBytes = concatBytes(salt, outputBytes);
         outputFileStream.write(finalBytes);
         outputFileStream.close();
+
+        // Clear secretKey, salt and cipher from memory
+        secretKey = null;
+        salt = null;
+        cipher = null;
+
+        // Make file read-only
+        boolean readOnly = _file.setWritable(false);
+        if (!readOnly) {
+            System.err.println("[Warning] Couldn't set file to read-only");
+        }
     }
 
+    /**
+     * Decrypts a file previously encrypted with AES encryption using the provided key.
+     * This method reads the encrypted data from the file, extracts the salt and cipher,
+     * and then uses the salt and key to perform decryption. The decrypted data is saved
+     * back to the same file, replacing the encrypted content.
+     *
+     * @param file The path to the file to be decrypted.
+     * @param key The decryption key used for AES decryption.
+     * @throws Exception If any error occurs during the decryption process or if the file is too large.
+     */
     public static void decryptFile(String file, String key) throws Exception {
-
         // Check if file exists
         File _file = new File(file);
         if (!_file.exists() || !_file.isFile()) {
@@ -116,6 +173,15 @@ public class AES {
             System.exit(1);
         }
         Xor.displayFileInfo(_file);
+
+        // Make file writable
+        if (!_file.canWrite()) {
+            boolean writable = _file.setWritable(true);
+            if (!writable) {
+                System.err.println("Couldn't set file to writable, aborting");
+                System.exit(1);
+            }
+        }
 
         Cipher cipher = Cipher.getInstance("AES");
 
@@ -144,6 +210,8 @@ public class AES {
             throw new RuntimeException(ex);
         }
 
+        salt = null; // Clear salt from memory
+
         cipher.init(Cipher.DECRYPT_MODE, secretKey);
 
         byte[] outputBytes = inputBytes;
@@ -153,6 +221,10 @@ public class AES {
             System.err.println("Error running AES, check key");
             System.exit(1);
         }
+
+        // Clear secretKey and cipher from memory
+        secretKey = null;
+        cipher = null;
 
         FileOutputStream outputFileStream = new FileOutputStream(file);
         outputFileStream.write(outputBytes);
