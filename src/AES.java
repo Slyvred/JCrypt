@@ -219,6 +219,10 @@ public class AES {
             outputBytes = cipher.doFinal(inputBytes);
         } catch (Exception e) {
             System.err.println("Error running AES, check key");
+
+            // Set back to read-only
+            _file.setWritable(false);
+
             System.exit(1);
         }
 
