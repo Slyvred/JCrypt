@@ -1,4 +1,5 @@
 import javax.crypto.Cipher;
+import java.io.File;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Scanner;
@@ -11,20 +12,51 @@ public class Menu {
         _pad,
         XOR_TEXT,
         XOR_FILE,
-        AES_ENCRYPT,
-        AES_DECRYPT,
+        AES_ENCRYPT_FILE,
+        AES_DECRYPT_FILE,
+        AES_ENCRYPT_FOLDER,
+        AES_DECRYPT_FOLDER,
         EXIT
     }
     private static final String ANSI_BLUE = "\u001B[34m";
     private static final String ANSI_RESET = "\u001B[0m";
+
+    private static int countFiles(File folder) throws IllegalArgumentException {
+
+        if (!folder.isDirectory()) {
+            throw new IllegalArgumentException("Argument must be a directory");
+        }
+
+        int count = 0;
+        for (File file : folder.listFiles()) {
+            if (file.isDirectory()) {
+                count += countFiles(file);
+            } else {
+                count++;
+            }
+        }
+        return count;
+    }
 
     private static void printOutput(String output) {
         System.out.println(ANSI_BLUE + output + ANSI_RESET);
     }
 
     public static encryptionMethod displayMenu() {
-        System.out.println("-==== JCrypt - By Slyvred ====-");
-        System.out.println("1. Xor text\n2. Xor file\n3. Encrypt file (AES-256)\n4. Decrypt file (AES-256)\n5. Exit");
+        System.out.println("\n<====== JCrypt - By Slyvred ======>");
+        System.out.println("XOR and AES-256 encryption tool\n");
+
+        System.out.println(
+                "1. Xor text\n" +
+                "2. Xor file\n" +
+                "3. Encrypt file (AES-256)\n" +
+                "4. Decrypt file (AES-256)\n" +
+                "5. Encrypt folder (AES-256)\n" +
+                "6. Decrypt folder (AES-256)\n" +
+                "7. Exit"
+        );
+
+        System.out.println();
         System.out.print("Select an option: ");
         Scanner sc = new Scanner(System.in);
         int option = 0;
@@ -96,5 +128,31 @@ public class Menu {
             throw new RuntimeException(ex);
         }
         printOutput("File " +  ((mode == Cipher.ENCRYPT_MODE) ? "encrypted" : "decrypted") + " successfully");
+    }
+
+    public static void aesFolder(int mode) {
+
+        if (mode != Cipher.ENCRYPT_MODE && mode != Cipher.DECRYPT_MODE) {
+            throw new IllegalArgumentException("Invalid mode");
+        }
+
+        String path = getString("Enter folder path");
+        String key = getString("Enter key");
+
+        // Get number of files in folder including subfolders
+        int numFiles = countFiles(new File(path));
+
+        try {
+            if (mode == Cipher.ENCRYPT_MODE) {
+                AES.encryptFolder(path, key);
+            } else {
+                AES.decryptFolder(path, key);
+            }
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+        printOutput("Folder " +  ((mode == Cipher.ENCRYPT_MODE) ? "encrypted" : "decrypted") + " successfully");
+        printOutput("Files " +  ((mode == Cipher.ENCRYPT_MODE) ? "encrypted" : "decrypted") + ": " + numFiles);
+
     }
 }

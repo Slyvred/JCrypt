@@ -13,11 +13,17 @@ public class Main {
             case XOR_FILE:
                 Menu.xorFile();
                 break;
-            case AES_ENCRYPT:
+            case AES_ENCRYPT_FILE:
                 Menu.aesFile(Cipher.ENCRYPT_MODE);
                 break;
-            case AES_DECRYPT:
+            case AES_DECRYPT_FILE:
                 Menu.aesFile(Cipher.DECRYPT_MODE);
+                break;
+            case AES_ENCRYPT_FOLDER:
+                Menu.aesFolder(Cipher.ENCRYPT_MODE);
+                break;
+            case AES_DECRYPT_FOLDER:
+                Menu.aesFolder(Cipher.DECRYPT_MODE);
                 break;
             case EXIT:
                 System.exit(0);

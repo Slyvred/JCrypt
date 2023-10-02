@@ -175,7 +175,8 @@ public class AES {
         Xor.displayFileInfo(_file);
 
         // Make file writable
-        if (!_file.canWrite()) {
+        boolean writeStatus = _file.canWrite();
+        if (!writeStatus) {
             boolean writable = _file.setWritable(true);
             if (!writable) {
                 System.err.println("Couldn't set file to writable, aborting");
@@ -220,8 +221,8 @@ public class AES {
         } catch (Exception e) {
             System.err.println("Error running AES, check key");
 
-            // Set back to read-only
-            _file.setWritable(false);
+            // Set back to original mode
+            _file.setWritable(writeStatus);
 
             System.exit(1);
         }
@@ -233,5 +234,53 @@ public class AES {
         FileOutputStream outputFileStream = new FileOutputStream(file);
         outputFileStream.write(outputBytes);
         outputFileStream.close();
+    }
+
+    public static void encryptFolder(String folder, String key) throws Exception {
+
+        File inputFolder = new File(folder);
+        if (!inputFolder.exists() || !inputFolder.isDirectory()) {
+            System.err.println("Folder does not exist");
+            System.exit(1);
+        }
+
+        File[] files = inputFolder.listFiles();
+        if (files == null) {
+            System.err.println("Error reading folder");
+            System.exit(1);
+        }
+
+        // Encrypt each file in the folder including subfolders
+        for (File file : files) {
+            if (file.isFile()) {
+                encryptFile(file.getAbsolutePath(), key);
+            } else if (file.isDirectory()) {
+                encryptFolder(file.getAbsolutePath(), key);
+            }
+        }
+    }
+
+public static void decryptFolder(String folder, String key) throws Exception {
+
+        File inputFolder = new File(folder);
+        if (!inputFolder.exists() || !inputFolder.isDirectory()) {
+            System.err.println("Folder does not exist");
+            System.exit(1);
+        }
+
+        File[] files = inputFolder.listFiles();
+        if (files == null) {
+            System.err.println("Error reading folder");
+            System.exit(1);
+        }
+
+        // Decrypt each file in the folder including subfolders
+        for (File file : files) {
+            if (file.isFile()) {
+                decryptFile(file.getAbsolutePath(), key);
+            } else if (file.isDirectory()) {
+                decryptFolder(file.getAbsolutePath(), key);
+            }
+        }
     }
 }
