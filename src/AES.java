@@ -179,7 +179,6 @@ public class AES {
 
         // Write salt and cipher to file
         FileOutputStream outputFileStream = new FileOutputStream(file);
-//        byte[] finalBytes = concatBytes(salt, outputBytes);
 
         // Calculate salt index
         int saltIndex = (outputBytes.length + salt.length) / key.length();
@@ -250,12 +249,6 @@ public class AES {
 
         inputFileStream.read(saltAndCipher);
         inputFileStream.close();
-
-        // Get salt
-//        byte[] salt = Arrays.copyOfRange(saltAndCipher, 0, 16); // 16 exclusive
-
-        // Get cipher
-//        byte[] inputBytes = Arrays.copyOfRange(saltAndCipher, 16, saltAndCipher.length);
 
         // Calculate salt index
         int saltIndex = saltAndCipher.length / key.length();

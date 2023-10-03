@@ -18,6 +18,7 @@ public class Menu {
         AES_DECRYPT_FOLDER,
         EXIT
     }
+
     private static final String ANSI_BLUE = "\u001B[34m";
     private static final String ANSI_RESET = "\u001B[0m";
 
@@ -47,13 +48,14 @@ public class Menu {
         System.out.println("XOR and AES-256 encryption tool\n");
 
         System.out.println(
-                "1. Xor text\n" +
-                "2. Xor file\n" +
-                "3. Encrypt file (AES-256)\n" +
-                "4. Decrypt file (AES-256)\n" +
-                "5. Encrypt folder (AES-256)\n" +
-                "6. Decrypt folder (AES-256)\n" +
-                "7. Exit"
+                """
+                        1. Xor text
+                        2. Xor file
+                        3. Encrypt file (AES-256)
+                        4. Decrypt file (AES-256)
+                        5. Encrypt folder (AES-256)
+                        6. Decrypt folder (AES-256)
+                        7. Exit"""
         );
 
         System.out.println();
@@ -118,6 +120,7 @@ public class Menu {
 
         String path = getString("Enter file path");
         String key = getString("Enter key");
+
         try {
             if (mode == Cipher.ENCRYPT_MODE) {
                 AES.encryptFile(path, key, true);
@@ -127,7 +130,8 @@ public class Menu {
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
-        printOutput("File " +  ((mode == Cipher.ENCRYPT_MODE) ? "encrypted" : "decrypted") + " successfully");
+
+        printOutput("File " + ((mode == Cipher.ENCRYPT_MODE) ? "encrypted" : "decrypted") + " successfully");
     }
 
     public static void aesFolder(int mode) {
@@ -151,8 +155,8 @@ public class Menu {
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
-        printOutput("\nFolder " +  ((mode == Cipher.ENCRYPT_MODE) ? "encrypted" : "decrypted") + " successfully");
-        printOutput("Files " +  ((mode == Cipher.ENCRYPT_MODE) ? "encrypted" : "decrypted") + ": " + numFiles);
 
+        printOutput("\n\nFolder " + ((mode == Cipher.ENCRYPT_MODE) ? "encrypted" : "decrypted") + " successfully");
+        printOutput("Files " + ((mode == Cipher.ENCRYPT_MODE) ? "encrypted" : "decrypted") + ": " + numFiles);
     }
 }
