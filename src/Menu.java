@@ -120,9 +120,9 @@ public class Menu {
         String key = getString("Enter key");
         try {
             if (mode == Cipher.ENCRYPT_MODE) {
-                AES.encryptFile(path, key);
+                AES.encryptFile(path, key, true);
             } else {
-                AES.decryptFile(path, key);
+                AES.decryptFile(path, key, true);
             }
         } catch (Exception ex) {
             throw new RuntimeException(ex);
@@ -151,7 +151,7 @@ public class Menu {
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
-        printOutput("Folder " +  ((mode == Cipher.ENCRYPT_MODE) ? "encrypted" : "decrypted") + " successfully");
+        printOutput("\nFolder " +  ((mode == Cipher.ENCRYPT_MODE) ? "encrypted" : "decrypted") + " successfully");
         printOutput("Files " +  ((mode == Cipher.ENCRYPT_MODE) ? "encrypted" : "decrypted") + ": " + numFiles);
 
     }

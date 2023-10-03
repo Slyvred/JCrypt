@@ -32,10 +32,10 @@ public class AES {
      * using a key derivation function (KDF).
      *
      * @param password The password from which the key will be derived.
-     * @param salt A byte array representing the salt used in the key derivation.
+     * @param salt     A byte array representing the salt used in the key derivation.
      * @return A SecretKey generated from the password and salt.
      * @throws NoSuchAlgorithmException If the specified cryptographic algorithm is not available.
-     * @throws InvalidKeySpecException If the provided key specification is invalid.
+     * @throws InvalidKeySpecException  If the provided key specification is invalid.
      */
     public static SecretKey generateAESKeyFromPassword(String password, byte[] salt) throws NoSuchAlgorithmException, InvalidKeySpecException {
         // PBKDF2 settings
@@ -116,10 +116,10 @@ public class AES {
      * and uses it along with the provided key to initialize the encryption process.
      *
      * @param file The path to the file to be encrypted.
-     * @param key The encryption key used for AES encryption.
+     * @param key  The encryption key used for AES encryption.
      * @throws Exception If any error occurs during the encryption process or if the file is too large.
      */
-    public static void encryptFile(String file, String key) throws Exception {
+    public static void encryptFile(String file, String key, boolean logFile) throws Exception {
 
         // Check if file exists
         File _file = new File(file);
@@ -127,7 +127,13 @@ public class AES {
             System.err.println("File does not exist");
             System.exit(1);
         }
-        Xor.displayFileInfo(_file);
+
+        if (logFile) {
+            Xor.displayFileInfo(_file);
+        }
+        else { // Print a dot to indicate progress
+            System.out.print(".");
+        }
 
         Cipher cipher = Cipher.getInstance("AES");
 
@@ -144,7 +150,7 @@ public class AES {
         cipher.init(Cipher.ENCRYPT_MODE, secretKey);
 
         FileInputStream inputFileStream = new FileInputStream(file);
-        byte[] inputBytes = new byte[(int)_file.length()];
+        byte[] inputBytes = new byte[(int) _file.length()];
 
         if (_file.length() != inputBytes.length) {
             throw new Exception("File too large, aborting");
@@ -191,17 +197,24 @@ public class AES {
      * back to the same file, replacing the encrypted content.
      *
      * @param file The path to the file to be decrypted.
-     * @param key The decryption key used for AES decryption.
+     * @param key  The decryption key used for AES decryption.
      * @throws Exception If any error occurs during the decryption process or if the file is too large.
      */
-    public static void decryptFile(String file, String key) throws Exception {
+    public static void decryptFile(String file, String key, boolean logFile) throws Exception {
         // Check if file exists
         File _file = new File(file);
         if (!_file.exists() || !_file.isFile()) {
             System.err.println("File does not exist");
             System.exit(1);
         }
-        Xor.displayFileInfo(_file);
+
+
+        if (logFile) {
+            Xor.displayFileInfo(_file);
+        }
+        else { // Print a dot to indicate progress
+            System.out.print(".");
+        }
 
         // Make file writable
         boolean writeStatus = _file.canWrite();
@@ -218,7 +231,7 @@ public class AES {
 
         // Read file
         FileInputStream inputFileStream = new FileInputStream(file);
-        byte[] saltAndCipher = new byte[(int)_file.length()];
+        byte[] saltAndCipher = new byte[(int) _file.length()];
 
         if (_file.length() != saltAndCipher.length) {
             throw new Exception("File too large, aborting");
@@ -295,14 +308,14 @@ public class AES {
         // Encrypt each file in the folder including subfolders
         for (File file : files) {
             if (file.isFile()) {
-                encryptFile(file.getAbsolutePath(), key);
+                encryptFile(file.getAbsolutePath(), key, false);
             } else if (file.isDirectory()) {
                 encryptFolder(file.getAbsolutePath(), key);
             }
         }
     }
 
-public static void decryptFolder(String folder, String key) throws Exception {
+    public static void decryptFolder(String folder, String key) throws Exception {
 
         File inputFolder = new File(folder);
         if (!inputFolder.exists() || !inputFolder.isDirectory()) {
@@ -319,7 +332,7 @@ public static void decryptFolder(String folder, String key) throws Exception {
         // Decrypt each file in the folder including subfolders
         for (File file : files) {
             if (file.isFile()) {
-                decryptFile(file.getAbsolutePath(), key);
+                decryptFile(file.getAbsolutePath(), key, false);
             } else if (file.isDirectory()) {
                 decryptFolder(file.getAbsolutePath(), key);
             }
