@@ -35,6 +35,10 @@ Select an option:
 - We calculate the AES-256 key with the password submitted by the user and the salt stored in the file
 - We recover the salt position in the file by dividing the length of the file (in bytes) by the length of the password
 
+## Performance
+
+According to my tests we can encrypt and decrypt at ~200MB/sec for a single file and ~10MB/sec for a folder with several thousands of small files. That translates to about 380 files/sec.
+
 ## Disclaimer
 
 I made this project as a way to overcome boredom and to get familiar with Java. **I am in no way, shape, or form a cryptography expert**, 
