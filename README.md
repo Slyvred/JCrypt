@@ -28,7 +28,7 @@ Select an option:
 ### AES Encryption
 
 - We generate an AES-256 key with the password submitted by the user and a randomly generated 16 bytes salt
-- We store the salt inside of the encrypted data at a position calculated by dividing the length (in bytes) of the encrypted data + 16 by the length of the password.
+- We store the salt inside of the encrypted data at a position calculated by adding the length (in bytes) of the encrypted data and the salt length and dividing that by the length of the password.
 
 ### AES Decryption
 
