@@ -169,8 +169,6 @@ public class AES {
         int saltIndex = (outputBytes.length + salt.length) / key.length();
         byte[] finalBytes = insertBytesAtIndex(outputBytes, salt, saltIndex);
 
-        System.out.println("Inserted salt at index " + saltIndex);
-
         outputFileStream.write(finalBytes);
         outputFileStream.close();
 
@@ -235,11 +233,13 @@ public class AES {
         // Get cipher
 //        byte[] inputBytes = Arrays.copyOfRange(saltAndCipher, 16, saltAndCipher.length);
 
-        int saltIndex = (saltAndCipher.length) / key.length();
+        // Calculate salt index
+        int saltIndex = saltAndCipher.length / key.length();
 
+        // Get salt
         byte[] salt = Arrays.copyOfRange(saltAndCipher, saltIndex, saltIndex + 16);
-        // Get cipher minus salt
 
+        // Get cipher minus salt
         byte[] inputBytesFirst = Arrays.copyOfRange(saltAndCipher, 0, saltIndex);
         byte[] inputBytesLast = Arrays.copyOfRange(saltAndCipher, saltIndex + 16, saltAndCipher.length);
 
