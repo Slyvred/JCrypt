@@ -33,4 +33,4 @@ so don't use this tool to protect sensitive information as **it may be vulnerabl
 - [x] Add salt support
 - [x] Store salt and make it random
 - [x] Store salt in the encrypted file
-- [ ] Make salt position "random" in the file
+- [x] Make salt position "random" in the file
