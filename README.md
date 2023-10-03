@@ -24,6 +24,17 @@ XOR and AES-256 encryption tool
 Select an option: 
 ```
 
+## How does it work ?
+### AES Encryption
+
+- We generate an AES-256 key with the password submitted by the user and a randomly generated 16 bytes salt
+- We store the salt inside of the encrypted data at a position calculated by adding the length (in bytes) of the encrypted data and the salt length and dividing that by the length of the password.
+
+### AES Decryption
+
+- We calculate the AES-256 key with the password submitted by the user and the salt stored in the file
+- We recover the salt position in the file by dividing the length of the file (in bytes) by the length of the password
+
 ## Disclaimer
 
 I made this project as a way to overcome boredom and to get familiar with Java. **I am in no way, shape, or form a cryptography expert**, 
