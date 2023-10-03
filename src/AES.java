@@ -122,14 +122,14 @@ public class AES {
     public static void encryptFile(String file, String key, boolean logFile) throws Exception {
 
         // Check if file exists
-        File _file = new File(file);
-        if (!_file.exists() || !_file.isFile()) {
+        File inputFile = new File(file);
+        if (!inputFile.exists() || !inputFile.isFile()) {
             System.err.println("File does not exist");
             System.exit(1);
         }
 
         if (logFile) {
-            Xor.displayFileInfo(_file);
+            Xor.displayFileInfo(inputFile);
         }
         else { // Print a dot to indicate progress
             System.out.print(".");
@@ -149,10 +149,20 @@ public class AES {
 
         cipher.init(Cipher.ENCRYPT_MODE, secretKey);
 
-        FileInputStream inputFileStream = new FileInputStream(file);
-        byte[] inputBytes = new byte[(int) _file.length()];
+        // Make file writable and readable
+        boolean writable = inputFile.setWritable(true);
+        boolean readable = inputFile.setReadable(true);
 
-        if (_file.length() != inputBytes.length) {
+        if (!writable || !readable) {
+            System.err.println("Need read-write permissions, aborting");
+            return;
+        }
+
+
+        FileInputStream inputFileStream = new FileInputStream(file);
+        byte[] inputBytes = new byte[(int) inputFile.length()];
+
+        if (inputFile.length() != inputBytes.length) {
             throw new Exception("File too large, aborting");
         }
         inputFileStream.read(inputBytes);
@@ -184,7 +194,7 @@ public class AES {
         cipher = null;
 
         // Make file read-only
-        boolean readOnly = _file.setWritable(false);
+        boolean readOnly = inputFile.setReadOnly();
         if (!readOnly) {
             System.err.println("[Warning] Couldn't set file to read-only");
         }
@@ -202,27 +212,28 @@ public class AES {
      */
     public static void decryptFile(String file, String key, boolean logFile) throws Exception {
         // Check if file exists
-        File _file = new File(file);
-        if (!_file.exists() || !_file.isFile()) {
+        File inputFile = new File(file);
+        if (!inputFile.exists() || !inputFile.isFile()) {
             System.err.println("File does not exist");
             System.exit(1);
         }
 
 
         if (logFile) {
-            Xor.displayFileInfo(_file);
+            Xor.displayFileInfo(inputFile);
         }
         else { // Print a dot to indicate progress
             System.out.print(".");
         }
 
-        // Make file writable
-        boolean writeStatus = _file.canWrite();
-        if (!writeStatus) {
-            boolean writable = _file.setWritable(true);
-            if (!writable) {
+        // Make file writable and readable
+        boolean canWrite = inputFile.canWrite();
+        if (!canWrite) {
+            boolean writable = inputFile.setWritable(true);
+            boolean readable = inputFile.setReadable(true);
+            if (!writable || !readable) {
                 System.err.println("Couldn't set file to writable, aborting");
-                System.exit(1);
+                return;
             }
         }
 
@@ -231,9 +242,9 @@ public class AES {
 
         // Read file
         FileInputStream inputFileStream = new FileInputStream(file);
-        byte[] saltAndCipher = new byte[(int) _file.length()];
+        byte[] saltAndCipher = new byte[(int) inputFile.length()];
 
-        if (_file.length() != saltAndCipher.length) {
+        if (inputFile.length() != saltAndCipher.length) {
             throw new Exception("File too large, aborting");
         }
 
@@ -277,7 +288,7 @@ public class AES {
             System.err.println("Error running AES, check key");
 
             // Set back to original mode
-            _file.setWritable(writeStatus);
+            inputFile.setWritable(canWrite);
 
             System.exit(1);
         }
