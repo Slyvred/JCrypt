@@ -85,6 +85,30 @@ public class AES {
         return result;
     }
 
+    /**
+     * Inserts a byte array into another byte array at a specified index and returns the result as a new byte array.
+     *
+     * @param originalArray The original byte array into which the bytes will be inserted.
+     * @param bytesToInsert The byte array to be inserted.
+     * @param indexToInsert The index at which the bytes will be inserted.
+     * @return A new byte array containing the inserted data.
+     */
+    public static byte[] insertBytesAtIndex(byte[] originalArray, byte[] bytesToInsert, int indexToInsert) {
+        // Create a temporary array of the size of the original array plus the size of the bytes to insert
+        byte[] newArray = new byte[originalArray.length + bytesToInsert.length];
+
+        // Copy the initial elements of the original array into the temporary array up to the specified index
+        System.arraycopy(originalArray, 0, newArray, 0, indexToInsert);
+
+        // Copy the bytes to insert into the temporary array at the specified index
+        System.arraycopy(bytesToInsert, 0, newArray, indexToInsert, bytesToInsert.length);
+
+        // Copy the remaining elements of the original array into the temporary array starting from the index after the inserted bytes
+        System.arraycopy(originalArray, indexToInsert, newArray, indexToInsert + bytesToInsert.length, originalArray.length - indexToInsert);
+
+        return newArray;
+    }
+
 
     /**
      * Encrypts a file using AES encryption with a provided key and saves the encrypted
@@ -139,7 +163,14 @@ public class AES {
 
         // Write salt and cipher to file
         FileOutputStream outputFileStream = new FileOutputStream(file);
-        byte[] finalBytes = concatBytes(salt, outputBytes);
+//        byte[] finalBytes = concatBytes(salt, outputBytes);
+
+        // Calculate salt index
+        int saltIndex = (outputBytes.length + salt.length) / key.length();
+        byte[] finalBytes = insertBytesAtIndex(outputBytes, salt, saltIndex);
+
+        System.out.println("Inserted salt at index " + saltIndex);
+
         outputFileStream.write(finalBytes);
         outputFileStream.close();
 
@@ -199,10 +230,21 @@ public class AES {
         inputFileStream.close();
 
         // Get salt
-        byte[] salt = Arrays.copyOfRange(saltAndCipher, 0, 16); // 16 exclusive
+//        byte[] salt = Arrays.copyOfRange(saltAndCipher, 0, 16); // 16 exclusive
 
         // Get cipher
-        byte[] inputBytes = Arrays.copyOfRange(saltAndCipher, 16, saltAndCipher.length);
+//        byte[] inputBytes = Arrays.copyOfRange(saltAndCipher, 16, saltAndCipher.length);
+
+        int saltIndex = (saltAndCipher.length) / key.length();
+
+        byte[] salt = Arrays.copyOfRange(saltAndCipher, saltIndex, saltIndex + 16);
+        // Get cipher minus salt
+
+        byte[] inputBytesFirst = Arrays.copyOfRange(saltAndCipher, 0, saltIndex);
+        byte[] inputBytesLast = Arrays.copyOfRange(saltAndCipher, saltIndex + 16, saltAndCipher.length);
+
+        byte[] inputBytes = concatBytes(inputBytesFirst, inputBytesLast);
+
 
         SecretKey secretKey;
         try {
