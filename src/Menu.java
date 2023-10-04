@@ -1,9 +1,6 @@
 import javax.crypto.Cipher;
 import java.io.File;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.Scanner;
-import javax.crypto.SecretKey;
 
 
 public class Menu {

@@ -5,7 +5,6 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
-import java.lang.reflect.Array;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
@@ -214,7 +213,8 @@ public class AES {
         File inputFile = new File(file);
         if (!inputFile.exists() || !inputFile.isFile()) {
             System.err.println("File does not exist");
-            System.exit(1);
+//            System.exit(1);
+            return;
         }
 
 
@@ -279,11 +279,10 @@ public class AES {
             outputBytes = cipher.doFinal(inputBytes);
         } catch (Exception e) {
             System.err.println("Error running AES, check key");
-
             // Set back to original mode
             inputFile.setWritable(canWrite);
-
             System.exit(1);
+//            return;
         }
 
         // Clear secretKey and cipher from memory
@@ -300,14 +299,19 @@ public class AES {
         File inputFolder = new File(folder);
         if (!inputFolder.exists() || !inputFolder.isDirectory()) {
             System.err.println("Folder does not exist");
-            System.exit(1);
+//            System.exit(1);
+            return;
         }
 
         File[] files = inputFolder.listFiles();
         if (files == null) {
             System.err.println("Error reading folder");
-            System.exit(1);
+//            System.exit(1);
+            return;
         }
+
+        // Log folder name
+        System.out.println("\nEncrypting folder: " + inputFolder.getName());
 
         // Encrypt each file in the folder including subfolders
         for (File file : files) {
@@ -324,14 +328,19 @@ public class AES {
         File inputFolder = new File(folder);
         if (!inputFolder.exists() || !inputFolder.isDirectory()) {
             System.err.println("Folder does not exist");
-            System.exit(1);
+//            System.exit(1);
+            return;
         }
 
         File[] files = inputFolder.listFiles();
         if (files == null) {
             System.err.println("Error reading folder");
-            System.exit(1);
+//            System.exit(1);
+            return;
         }
+
+        // Log folder name
+        System.out.println("\nDecrypting folder: " + inputFolder.getName());
 
         // Decrypt each file in the folder including subfolders
         for (File file : files) {
