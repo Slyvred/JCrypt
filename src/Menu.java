@@ -19,16 +19,17 @@ public class Menu {
     private static final String ANSI_BLUE = "\u001B[34m";
     private static final String ANSI_RESET = "\u001B[0m";
 
-    private static int countFiles(File folder) throws IllegalArgumentException {
+    private static int countFiles(String folder) throws IllegalArgumentException {
 
-        if (!folder.isDirectory()) {
+        File inputFolder = new File(folder);
+        if (!inputFolder.isDirectory() || !inputFolder.exists()) {
             throw new IllegalArgumentException("Argument must be a directory");
         }
 
         int count = 0;
-        for (File file : folder.listFiles()) {
+        for (File file : inputFolder.listFiles()) {
             if (file.isDirectory()) {
-                count += countFiles(file);
+                count += countFiles(file.getAbsolutePath());
             } else {
                 count++;
             }
@@ -141,7 +142,15 @@ public class Menu {
         String key = getString("Enter key");
 
         // Get number of files in folder including subfolders
-        int numFiles = countFiles(new File(path));
+
+        int numFiles = -1;
+
+        try {
+            numFiles = countFiles(path);
+        } catch (IllegalArgumentException ex) {
+            System.err.println("Invalid folder path");
+            System.exit(1);
+        }
 
         try {
             if (mode == Cipher.ENCRYPT_MODE) {
