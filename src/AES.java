@@ -128,7 +128,7 @@ public class AES {
         }
 
         if (logFile) {
-            Xor.displayFileInfo(inputFile);
+            Utils.displayFileInfo(inputFile);
         }
         else { // Print a dot to indicate progress
             System.out.print(".");
@@ -219,7 +219,7 @@ public class AES {
 
 
         if (logFile) {
-            Xor.displayFileInfo(inputFile);
+            Utils.displayFileInfo(inputFile);
         }
         else { // Print a dot to indicate progress
             System.out.print(".");

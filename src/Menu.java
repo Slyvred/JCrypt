@@ -19,24 +19,6 @@ public class Menu {
     private static final String ANSI_BLUE = "\u001B[34m";
     private static final String ANSI_RESET = "\u001B[0m";
 
-    private static int countFiles(String folder) throws IllegalArgumentException {
-
-        File inputFolder = new File(folder);
-        if (!inputFolder.isDirectory() || !inputFolder.exists()) {
-            throw new IllegalArgumentException("Argument must be a directory");
-        }
-
-        int count = 0;
-        for (File file : inputFolder.listFiles()) {
-            if (file.isDirectory()) {
-                count += countFiles(file.getAbsolutePath());
-            } else {
-                count++;
-            }
-        }
-        return count;
-    }
-
     private static void printOutput(String output) {
         System.out.println(ANSI_BLUE + output + ANSI_RESET);
     }
@@ -146,7 +128,7 @@ public class Menu {
         int numFiles = -1;
 
         try {
-            numFiles = countFiles(path);
+            numFiles = Utils.countFiles(path);
         } catch (IllegalArgumentException ex) {
             System.err.println("Invalid folder path");
             System.exit(1);

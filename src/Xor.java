@@ -41,17 +41,6 @@ class Xor {
         return output;
     }
 
-    /**
-     * Displays information about a given file, including its name, path, size
-     *
-     * @param file The File object representing the file whose information is to be displayed.
-     */
-    public static void displayFileInfo(File file) {
-        System.out.println("\nFile name: " + file.getName());
-        System.out.println("Absolute path: " + file.getAbsolutePath());
-        System.out.println("Size: " + file.length() + " bytes\n");
-    }
-
     private static String toHex(String arg) {
         return String.format("%x", new BigInteger(1, arg.getBytes(StandardCharsets.UTF_8)));
     }
@@ -72,7 +61,7 @@ class Xor {
             System.err.println("File does not exist");
             System.exit(1);
         }
-        displayFileInfo(inputFile);
+        Utils.displayFileInfo(inputFile);
 
         FileInputStream inputFileStream = new FileInputStream(file);
         byte[] inputBytes = new byte[(int) inputFile.length()];
