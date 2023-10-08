@@ -294,6 +294,13 @@ public class AES {
         outputFileStream.close();
     }
 
+    /**
+     * Encrypts or decrypts all files in a folder using AES encryption with a provided key.
+     * @param folder The path to the folder to be encrypted/decrypted.
+     * @param key The encryption/decryption key used for AES encryption/decryption.
+     * @param mode The cipher mode, either Cipher.ENCRYPT_MODE or Cipher.DECRYPT_MODE.
+     * @throws Exception If any error occurs during the encryption/decryption process.
+     */
     public static void toFolder(String folder, String key, int mode) throws Exception {
 
         if (mode != Cipher.ENCRYPT_MODE && mode != Cipher.DECRYPT_MODE) {
