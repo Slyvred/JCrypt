@@ -294,7 +294,11 @@ public class AES {
         outputFileStream.close();
     }
 
-    public static void encryptFolder(String folder, String key) throws Exception {
+    public static void toFolder(String folder, String key, int mode) throws Exception {
+
+        if (mode != Cipher.ENCRYPT_MODE && mode != Cipher.DECRYPT_MODE) {
+            throw new IllegalArgumentException("Invalid mode");
+        }
 
         File inputFolder = new File(folder);
         if (!inputFolder.exists() || !inputFolder.isDirectory()) {
@@ -311,43 +315,19 @@ public class AES {
         }
 
         // Log folder name
-        System.out.println("\nEncrypting folder: " + inputFolder.getName());
+        String modePrint = (mode == Cipher.ENCRYPT_MODE) ? "Encrypting" : "Decrypting";
+        System.out.println("\n" + modePrint + " folder: " + inputFolder.getName());
 
         // Encrypt each file in the folder including subfolders
         for (File file : files) {
             if (file.isFile()) {
-                encryptFile(file.getAbsolutePath(), key, false);
+                if ((mode == Cipher.ENCRYPT_MODE)) {
+                    encryptFile(file.getAbsolutePath(), key, false);
+                } else {
+                    decryptFile(file.getAbsolutePath(), key, false);
+                }
             } else if (file.isDirectory()) {
-                encryptFolder(file.getAbsolutePath(), key);
-            }
-        }
-    }
-
-    public static void decryptFolder(String folder, String key) throws Exception {
-
-        File inputFolder = new File(folder);
-        if (!inputFolder.exists() || !inputFolder.isDirectory()) {
-            System.err.println("Folder does not exist");
-//            System.exit(1);
-            return;
-        }
-
-        File[] files = inputFolder.listFiles();
-        if (files == null) {
-            System.err.println("Error reading folder");
-//            System.exit(1);
-            return;
-        }
-
-        // Log folder name
-        System.out.println("\nDecrypting folder: " + inputFolder.getName());
-
-        // Decrypt each file in the folder including subfolders
-        for (File file : files) {
-            if (file.isFile()) {
-                decryptFile(file.getAbsolutePath(), key, false);
-            } else if (file.isDirectory()) {
-                decryptFolder(file.getAbsolutePath(), key);
+                toFolder(file.getAbsolutePath(), key, mode);
             }
         }
     }

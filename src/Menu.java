@@ -135,11 +135,7 @@ public class Menu {
         }
 
         try {
-            if (mode == Cipher.ENCRYPT_MODE) {
-                AES.encryptFolder(path, key);
-            } else {
-                AES.decryptFolder(path, key);
-            }
+            AES.toFolder(path, key, mode);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
