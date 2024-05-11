@@ -19,6 +19,16 @@ public class Menu {
     private static final String ANSI_BLUE = "\u001B[34m";
     private static final String ANSI_RESET = "\u001B[0m";
 
+    private static String stringToHex(String input) {
+        StringBuilder hexString = new StringBuilder();
+
+        for (char character : input.toCharArray()) {
+            hexString.append(Integer.toHexString((int) character));
+        }
+
+        return hexString.toString();
+    }
+
     private static void printOutput(String output) {
         System.out.println(ANSI_BLUE + output + ANSI_RESET);
     }
@@ -79,6 +89,9 @@ public class Menu {
         String output = Xor.xorText(text, key);
         System.out.print("Xor'd text: ");
         printOutput(output);
+
+        System.out.println("Hex: ");
+        printOutput(stringToHex(output));
     }
 
     public static void xorFile() {
